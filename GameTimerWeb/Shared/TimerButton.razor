@@ -4,7 +4,7 @@
 <MudPaper 
     Height="@height"
     Class="d-flex flex-column align-center justify-center mud-width-full"
-    @*Style="@style"*@
+    Style="@style"
 >
     <MudButton 
         Color="@colour" 
@@ -19,20 +19,14 @@
     [Parameter]
     public int TimerIndex { get; set; }
 
-    private double heightVH
-    {
-        get {
-            int numRows = (int)Math.Round(((double)StateContainer.CurrentNumberOfPlayers) / 2);
-            return 90 / numRows;
-        }
-    }
+    private int numRows { get => (int)Math.Ceiling(((double)StateContainer.CurrentNumberOfPlayers) / 2); }
 
     private string height {
-        get => $"{heightVH}vh";
+        get => $"{80M / numRows}vh";
     }
 
     private string margin {
-        get => $"{heightVH / 20}vh";
+        get => $"{5M / numRows}vh";
 	}
 	private string style
 	{
