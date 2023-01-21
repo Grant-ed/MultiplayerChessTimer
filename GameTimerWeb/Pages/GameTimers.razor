@@ -1,0 +1,61 @@
+﻿@page "/"
+@implements IDisposable
+@inject GameTimer GameTimer
+@inject IDialogService DialogService
+
+<PageTitle>Game Timer</PageTitle>
+
+<MudGrid Spacing="0">
+    @for (int i = 0; i < numPlayers; i++)
+    {
+        int playerIndex = HelperFunctions.PlayerNumFromGridItemIndex(i, numPlayers);
+                
+        <MudItem xs="6">
+            <TimerButton TimerIndex="@playerIndex" />
+        </MudItem>
+    }
+</MudGrid>
+
+
+@code {
+    Timer? gameClock;
+
+    private int numPlayers
+    {
+        get => GameTimer?.NumberOfPlayersSetting ?? 0;
+    }
+
+    protected override void OnInitialized()
+    {
+        GameTimer.OnGameStateChanged += StateHasChanged;
+        GameTimer.OnSettingsStateChange += InitGameState;
+            gameClock = new Timer(GameTimer.Tick, GameTimer.timerSignal, GameTimer.CLOCK_TICKSPEED, GameTimer.CLOCK_TICKSPEED);
+    }
+
+    public void Dispose()
+    {
+        GameTimer.OnGameStateChanged -= StateHasChanged;
+        GameTimer.OnSettingsStateChange -= InitGameState;
+        gameClock?.Dispose();
+    }
+
+    private void InitGameState()
+    {
+        GameTimer.InitializeGameTimer();
+        StateHasChanged();
+    }
+
+    private void OpenSettings()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+        DialogService.Show<GameTimerWeb.Dialogs.SettingsDialog>("Settings", closeOnEscapeKey);
+    }
+    
+    private void EscapeKey(KeyboardEventArgs e)
+    {
+        if (e.Code == "Escape")
+        {
+            OpenSettings();
+        }
+    }
+}

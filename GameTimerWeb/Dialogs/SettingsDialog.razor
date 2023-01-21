@@ -1,0 +1,78 @@
+﻿@implements IDisposable
+@inject GameTimer GameTimer
+
+<MudDialog>
+    <DialogContent>
+        <MudContainer Class="d-flex flex-column py-0 px-0">
+            <MudNumericField Class="py-1" @bind-Value="NumPlayers" Label="Number of Players" Variant="Variant.Outlined" Min="2" />
+            <MudNumericField Class="py-1" @bind-Value="TimePerPlayer" Label="Time Per Player (m:ss)" Variant="Variant.Outlined" Min="1" Step="30" Converter="converterTimePerPlayer" />
+            <MudNumericField Class="py-1" @bind-Value="TimeIncrement" Label="Time Increment (seconds)" T="double" Format="F1" Variant="Variant.Outlined" Min="0.0" Step=".5" />
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Close">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+
+    void Close() => MudDialog?.Close(DialogResult.Ok(true));
+    
+    int NumPlayers
+    {
+        get => GameTimer.NumberOfPlayersSetting;
+        set => GameTimer.NumberOfPlayersSetting = value;
+    }
+
+    // HACK TO GET NUMERIC FIELD TO WORK WITH TIMESPAN -- MudTimePicker doesn't work for values below minutes :(
+    // Use a double value which stores the time in seconds, and use a converter to convert double => timespan => string, and vice versa
+
+    double TimePerPlayer
+    {
+        get => GameTimer.TimePerPlayer.TotalSeconds;
+        set => GameTimer.TimePerPlayer = TimeSpan.FromSeconds(value);
+    }
+
+    const string TimerPerPlayerFormat = @"m\:ss";
+    Converter<double> converterTimePerPlayer = new Converter<double>
+    {
+        SetFunc = value => TimeSpan.FromSeconds(value).ToString(TimerPerPlayerFormat),
+        GetFunc = text => TimeSpan.TryParseExact(text, TimerPerPlayerFormat, CultureInfo.CurrentCulture, out TimeSpan _) 
+                            ? TimeSpan.ParseExact(text, TimerPerPlayerFormat, CultureInfo.CurrentCulture).TotalSeconds
+                            : GameTimer.DEFAULT_TIME_PER_PLAYER.TotalSeconds,
+    };
+    
+    double TimeIncrement
+    {
+        get => GameTimer.Increment.TotalSeconds;
+        set => GameTimer.Increment = TimeSpan.FromSeconds(value);
+    }
+
+    protected override void OnInitialized()
+    {
+        GameTimer.OnSettingsStateChange += InitGameState;
+        GameTimer.OnSettingsStateChange += StateHasChanged;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender && GameTimer.Paused == false)
+        {
+            // Pause game if not paused, in case players accidentally navigated to the settings
+            GameTimer.PauseGameTimer();
+        }
+    }
+
+    private void InitGameState()
+    {
+        GameTimer.InitializeGameTimer();
+    }
+
+    public void Dispose()
+    {
+        GameTimer.OnSettingsStateChange -= InitGameState;
+        GameTimer.OnSettingsStateChange -= StateHasChanged;
+    }
+}

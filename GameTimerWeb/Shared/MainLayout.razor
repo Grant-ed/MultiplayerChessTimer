@@ -1,0 +1,82 @@
+﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject GameTimer GameTimer
+@inject IDialogService DialogService
+
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="0">
+        <MudIconButton Icon="@PauseButtonIcon" Color="Color.Primary" Variant="Variant.Filled" Disabled="@gameNotStarted" @onclick="PauseResumeGame" />
+        <MudSpacer />
+        <MudText Typo="Typo.h6">Multiplayer Chess Timer</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.Settings" OnClick="OpenSettings" Variant="Variant.Filled" Disabled="@gamePlaying" Color="Color.Primary">
+            Settings
+        </MudIconButton>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="py-5">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+    
+</MudLayout>
+
+@code {
+    private bool _isDarkMode;
+    private MudThemeProvider? _mudThemeProvider;
+
+    bool _playing { get => !GameTimer.Paused; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        GameTimer.InitializeGameTimer();
+        GameTimer.OnGameStateChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        GameTimer.OnGameStateChanged -= StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = await (_mudThemeProvider?.GetSystemPreference() ?? new Task<bool>(() => false));
+            StateHasChanged();
+        }
+    }
+
+    private bool gameNotStarted { get => GameTimer.CurrentPlayerIndex == null; }
+    private bool gamePlaying { get => !GameTimer.Paused; }
+    private string PauseButtonIcon
+    {
+        get => GameTimer.Paused ? Icons.Material.Filled.PlayArrow : Icons.Material.Filled.Pause;
+    }
+
+    private void PauseResumeGame()
+    {
+        if (gameNotStarted)
+            return;
+
+        if (GameTimer.Paused)
+        {
+            GameTimer.ResumeGameTimer();
+        }
+        else
+        {
+            GameTimer.PauseGameTimer();
+        }
+    }
+
+    private void OpenSettings()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+        DialogService.Show<GameTimerWeb.Dialogs.SettingsDialog>("Settings", closeOnEscapeKey);
+    }
+}

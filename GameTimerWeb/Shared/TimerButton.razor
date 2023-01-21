@@ -1,0 +1,87 @@
+﻿@implements IDisposable
+@inject GameTimer StateContainer
+
+<MudPaper 
+    Height="@height"
+    Class="d-flex flex-column align-center justify-center mud-width-full"
+    @*Style="@style"*@
+>
+    <MudButton 
+        Color="@colour" 
+        Variant="Variant.Filled" 
+        Class="mud-width-full"
+        Style="height:100%;"
+        @onclick="OnClick">@currentTime</MudButton>
+</MudPaper>
+
+@code {
+
+    [Parameter]
+    public int TimerIndex { get; set; }
+
+    private double heightVH
+    {
+        get {
+            int numRows = (int)Math.Round(((double)StateContainer.CurrentNumberOfPlayers) / 2);
+            return 90 / numRows;
+        }
+    }
+
+    private string height {
+        get => $"{heightVH}vh";
+    }
+
+    private string margin {
+        get => $"{heightVH / 20}vh";
+	}
+	private string style
+	{
+		get => $"margin-top:{margin}; margin-bottom:{margin};";
+	}
+    
+    private Color colour
+    {
+        get {
+            if (StateContainer.GetPlayerTimeLeft(TimerIndex) <= TimeSpan.Zero)
+                return Color.Error;
+
+            if (StateContainer.CurrentPlayerIndex != TimerIndex)
+                return Color.Primary;
+
+            if (StateContainer.Paused)
+                return Color.Warning;
+
+            return Color.Success;
+        }
+    }
+
+    private string currentTime {
+        get 
+        {
+            var timeLeft = StateContainer?.GetPlayerTimeLeft(TimerIndex);
+
+            if (timeLeft == null)
+                return "ERROR";
+
+            if (timeLeft < TimeSpan.FromMinutes(1))
+                return timeLeft.Value.ToString(@"ss\.ff");
+                
+            return timeLeft.Value.ToString(@"mm\:ss");
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        StateContainer.OnGameStateChanged += StateHasChanged;
+    }
+
+    private void OnClick()
+    {
+        StateContainer.NextPlayer(TimerIndex);
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnGameStateChanged -= StateHasChanged;
+    }
+}
