@@ -1,17 +1,11 @@
 ﻿namespace GameTimerWeb
 {
-    public class GameTimer
+    public class GameTimerState
     {
 
         #region Constants
 
-        public static readonly TimeSpan DEFAULT_TIME_PER_PLAYER = new TimeSpan(0, 3, 0);
-
-        public static readonly TimeSpan DEFAULT_INCREMENT = TimeSpan.Zero;
-
         public static readonly TimeSpan CLOCK_TICKSPEED = TimeSpan.FromMilliseconds(10);
-
-        private static readonly int DEFAULT_NUMBER_OF_PLAYERS = 4;
 
         private static readonly bool INITIAL_GAME_PAUSE_STATE = true;
 
@@ -19,7 +13,7 @@
 
         #endregion
 
-        public GameTimer()
+        public GameTimerState()
         {
             InitializeGameTimer();
         }
@@ -76,7 +70,7 @@
             currentPlayerIndex = null;
             paused = INITIAL_GAME_PAUSE_STATE;
             if (KeepDirectionBetweenGames == false)
-                clockWise = clockWiseInitialGameDirection;
+                clockWise = INITIAL_CLOCKWISE;
             NotifyGameStateChanged();
         }
 
@@ -175,62 +169,54 @@
 
         #region Settings
 
-        private TimeSpan timePerPlayer = DEFAULT_TIME_PER_PLAYER;
+        private GameTimerSettings settings = new GameTimerSettings();
+
+        public GameTimerSettings Settings
+        {
+            get => settings;
+            set
+            {
+                settings = value;
+                NotifySettingsStateChanged();
+            }
+        }
 
         public TimeSpan TimePerPlayer
         {
-            get => timePerPlayer;
+            get => Settings.TimePerPlayer;
             set
             {
-                timePerPlayer = value;
+                Settings.TimePerPlayer = value;
                 NotifySettingsStateChanged();
             }
         }
-
-        private TimeSpan increment = DEFAULT_INCREMENT;
 
         public TimeSpan Increment
         {
-            get => increment;
+            get => Settings.Increment;
             set
             {
-                increment = value;
+                Settings.Increment = value;
                 NotifySettingsStateChanged();
             }
         }
-
-        private int numberOfPlayersSetting = DEFAULT_NUMBER_OF_PLAYERS;
 
         public int NumberOfPlayersSetting
         {
-            get => numberOfPlayersSetting;
+            get => Settings.NumberOfPlayersSetting;
             set
             {
-                numberOfPlayersSetting = value;
+                Settings.NumberOfPlayersSetting = value;
                 NotifySettingsStateChanged();
             }
         }
-
-        private bool clockWiseInitialGameDirection = INITIAL_CLOCKWISE;
-
-        public bool ClockWiseInitialGameDirection
-        {
-            get => clockWiseInitialGameDirection;
-            set
-            {
-                clockWiseInitialGameDirection = value;
-                NotifySettingsStateChanged();
-            }
-        }
-
-        private bool keepDirectionBetweenGames = false;
 
         public bool KeepDirectionBetweenGames
         {
-            get => keepDirectionBetweenGames;
+            get => Settings.KeepDirectionBetweenGames;
             set
             {
-                keepDirectionBetweenGames = value;
+                Settings.KeepDirectionBetweenGames = value;
                 NotifySettingsStateChanged();
             }
         }

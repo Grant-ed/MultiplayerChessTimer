@@ -1,7 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @implements IDisposable
-@inject GameTimer GameTimer
+@inject GameTimerState GameTimer
 @inject IDialogService DialogService
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
 <MudDialogProvider />
@@ -41,13 +42,16 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        LoadGameTimerSettingsFromLocalStorage();
         GameTimer.InitializeGameTimer();
         GameTimer.OnGameStateChanged += StateHasChanged;
+        GameTimer.OnSettingsStateChange += SaveGameTimerSettingsToLocalStorage;
     }
 
     public void Dispose()
     {
         GameTimer.OnGameStateChanged -= StateHasChanged;
+        GameTimer.OnSettingsStateChange -= SaveGameTimerSettingsToLocalStorage;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -57,6 +61,27 @@
             _isDarkMode = await (_mudThemeProvider?.GetSystemPreference() ?? new Task<bool>(() => false));
             StateHasChanged();
         }
+    }
+
+    private void LoadGameTimerSettingsFromLocalStorage()
+    {
+        if (!localStorage.ContainKey(GameTimerSettings.LOCAL_STORAGE_KEY))
+            return;
+
+        try
+        {
+            var settings = localStorage.GetItem<GameTimerSettings>(GameTimerSettings.LOCAL_STORAGE_KEY);
+            GameTimer.Settings = settings;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Could not load settings from local storage due to {e.GetType()}. {e.Message}");
+        }
+    }
+
+    private void SaveGameTimerSettingsToLocalStorage()
+    {
+        localStorage.SetItem<GameTimerSettings>(GameTimerSettings.LOCAL_STORAGE_KEY, GameTimer.Settings);
     }
 
     private bool gameNotStarted { get => GameTimer.CurrentPlayerIndex == null; }

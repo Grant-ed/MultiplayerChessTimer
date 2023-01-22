@@ -1,9 +1,9 @@
 ﻿@page "/"
 @implements IDisposable
-@inject GameTimer GameTimer
+@inject GameTimerState GameTimer
 @inject IDialogService DialogService
 
-<PageTitle>Game Timer</PageTitle>
+<PageTitle>Multiplayer Chess Clock</PageTitle>
 
 <MudGrid Spacing="0">
     @for (int i = 0; i < numPlayers; i++)
@@ -29,7 +29,7 @@
     {
         GameTimer.OnGameStateChanged += StateHasChanged;
         GameTimer.OnSettingsStateChange += InitGameState;
-            gameClock = new Timer(GameTimer.Tick, GameTimer.timerSignal, GameTimer.CLOCK_TICKSPEED, GameTimer.CLOCK_TICKSPEED);
+            gameClock = new Timer(GameTimer.Tick, GameTimer.timerSignal, GameTimerState.CLOCK_TICKSPEED, GameTimerState.CLOCK_TICKSPEED);
     }
 
     public void Dispose()
