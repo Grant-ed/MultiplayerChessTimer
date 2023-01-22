@@ -99,7 +99,7 @@
                 return;
 
             if (currentPlayerIndex != null && paused == false && playersTimeLeft[currentPlayerIndex.Value] > TimeSpan.Zero)
-                playersTimeLeft[currentPlayerIndex.Value] += DEFAULT_INCREMENT;
+                playersTimeLeft[currentPlayerIndex.Value] += Increment;
 
             if (currentPlayerIndex == null)
                 currentPlayerIndex = requestingPlayerIndex - 1;
