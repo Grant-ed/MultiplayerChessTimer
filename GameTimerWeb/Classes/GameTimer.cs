@@ -67,6 +67,13 @@
 
         private readonly Random rnd = new Random();
 
+        private Dictionary<int, int> playerFinishedPlaces = new();
+
+        public Dictionary<int, int> PlayerFinishedPlaces
+        {
+            get => playerFinishedPlaces;
+        }
+
         #endregion
 
         #region Methods
@@ -76,6 +83,7 @@
             playersTimeLeft = Enumerable.Repeat(TimePerPlayer, NumberOfPlayersSetting).ToList();
             currentPlayerIndex = null;
             paused = INITIAL_GAME_PAUSE_STATE;
+            playerFinishedPlaces = new Dictionary<int, int>();
             if (KeepDirectionBetweenGames == false)
                 clockWise = INITIAL_CLOCKWISE;
             NotifyGameStateChanged();
@@ -105,12 +113,12 @@
                 ResumeGameTimer();
                 return;
             }
-
+            
             // If the requesting player is not the current player, ignore the request, unless the current player is null
             if (currentPlayerIndex != null && requestingPlayerIndex != currentPlayerIndex)
                 return;
 
-            if (currentPlayerIndex != null && paused == false && playersTimeLeft[currentPlayerIndex.Value] > TimeSpan.Zero)
+            if (currentPlayerIndex != null && paused == false && playersTimeLeft[currentPlayerIndex.Value] > TimeSpan.Zero && playersTimeLeft.Where(t => t > TimeSpan.Zero).Count() > 1)
                 playersTimeLeft[currentPlayerIndex.Value] += Increment;
 
             if (currentPlayerIndex == null)
@@ -181,10 +189,35 @@
                 if (playersTimeLeft[currentPlayerIndex.Value] <= TimeSpan.Zero)
                 {
                     playersTimeLeft[currentPlayerIndex.Value] = TimeSpan.Zero;
+                    addPlayerToFinishedPlayersPlaces(currentPlayerIndex.Value);
                     NextPlayer(currentPlayerIndex.Value);
                     PauseGameTimer();
                 }
                 NotifyGameStateChanged();
+            }
+        }
+
+        private void addPlayerToFinishedPlayersPlaces(int finishedPlayerId)
+        {
+            int place = CurrentNumberOfPlayers - playerFinishedPlaces.Count();
+            playerFinishedPlaces.Add(finishedPlayerId, place);
+        }
+
+        public string GetFinishedPlayerPlace(int playerIndex)
+        {
+            if (playerFinishedPlaces.TryGetValue(playerIndex, out int place) == false)
+                return string.Empty;
+
+            switch (place)
+            {
+                case 1:
+                    return "1st";
+                case 2:
+                    return "2nd";
+                case 3:
+                    return "3rd";
+                default:
+                    return $"{place}th";
             }
         }
         

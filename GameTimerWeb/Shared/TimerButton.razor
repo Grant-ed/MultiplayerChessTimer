@@ -37,10 +37,10 @@
         get {
             string border = "";
             if (StateContainer.EnableColours)
-			{
-				var playerColour = StateContainer.GetPlayerColour(TimerIndex);
-				border = $"border: 5px solid #{playerColour.R:X2}{playerColour.G:X2}{playerColour.B:X2};";
-			}
+            {
+                var playerColour = StateContainer.GetPlayerColour(TimerIndex);
+                border = $"border: 5px solid #{playerColour.R:X2}{playerColour.G:X2}{playerColour.B:X2};";
+            }
             return $"margin-top:{margin}; margin-bottom:{margin}; {border}";
         }
     }
@@ -70,14 +70,17 @@
             return Color.Success;
         }
     }
-
+    
     private string currentTime {
         get 
         {
             var timeLeft = StateContainer?.GetPlayerTimeLeft(TimerIndex);
 
-            if (timeLeft == null)
+            if (timeLeft == null || StateContainer == null)
                 return "ERROR";
+
+            if (timeLeft <= TimeSpan.Zero)
+                return StateContainer.GetFinishedPlayerPlace(TimerIndex);
 
             if (timeLeft < TimeSpan.FromMinutes(1))
                 return timeLeft.Value.ToString(@"ss\.ff");

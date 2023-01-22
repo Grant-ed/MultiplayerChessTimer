@@ -90,7 +90,7 @@
         localStorage.SetItem<GameTimerSettings>(GameTimerSettings.LOCAL_STORAGE_KEY, GameTimer.Settings);
     }
 
-    private bool gameNotStarted { get => GameTimer.CurrentPlayerIndex == null; }
+    private bool gameNotStarted { get => GameTimer.CurrentPlayerIndex == null && GameTimer.PlayerFinishedPlaces.Any() == false; }
     private bool resetBtnDisabled { get => gameNotStarted || gamePlaying; }
     private bool gamePlaying { get => !GameTimer.Paused; }
     private string PauseButtonIcon
