@@ -11,9 +11,11 @@
 
         public static readonly TimeSpan CLOCK_TICKSPEED = TimeSpan.FromMilliseconds(10);
 
-        const int DEFAULT_NUMBER_OF_PLAYERS = 4;
+        private static readonly int DEFAULT_NUMBER_OF_PLAYERS = 4;
 
-        private const bool INITIAL_GAME_PAUSE_STATE = true;
+        private static readonly bool INITIAL_GAME_PAUSE_STATE = true;
+
+        private static readonly bool INITIAL_CLOCKWISE = true;
 
         #endregion
 
@@ -56,16 +58,25 @@
         }
 
         private DateTime lastTimeTicked = DateTime.Now;
-        
+
+        private bool clockWise = INITIAL_CLOCKWISE;
+
+        public bool ClockWise
+        {
+            get => clockWise;
+        }
+
         #endregion
 
         #region Methods
-        
+
         public void InitializeGameTimer()
         {
             playersTimeLeft = Enumerable.Repeat(TimePerPlayer, NumberOfPlayersSetting).ToList();
             currentPlayerIndex = null;
-            paused = true;
+            paused = INITIAL_GAME_PAUSE_STATE;
+            if (KeepDirectionBetweenGames == false)
+                clockWise = clockWiseInitialGameDirection;
             NotifyGameStateChanged();
         }
 
@@ -102,9 +113,17 @@
                 playersTimeLeft[currentPlayerIndex.Value] += Increment;
 
             if (currentPlayerIndex == null)
-                currentPlayerIndex = requestingPlayerIndex - 1;
-            
-            currentPlayerIndex = (currentPlayerIndex + 1) % playersTimeLeft.Count;
+            {
+                if (clockWise)
+                    currentPlayerIndex = requestingPlayerIndex - 1;
+                else
+                    currentPlayerIndex = requestingPlayerIndex + 1;
+            }
+
+            if (clockWise)
+                currentPlayerIndex = (currentPlayerIndex + 1) % playersTimeLeft.Count;
+            else
+                currentPlayerIndex = (currentPlayerIndex - 1) % playersTimeLeft.Count;
 
             // Skip to next player that has time left, if the next player doesn't have any time
             if (playersTimeLeft[currentPlayerIndex.Value] <= TimeSpan.Zero) 
@@ -126,6 +145,12 @@
                 ResumeGameTimer();
             else
                 NotifyGameStateChanged();
+        }
+
+        public void ReverseDirection()
+        {
+            clockWise = !clockWise;
+            NotifyGameStateChanged();
         }
 
         public void Tick(object? _)
@@ -182,6 +207,30 @@
             set
             {
                 numberOfPlayersSetting = value;
+                NotifySettingsStateChanged();
+            }
+        }
+
+        private bool clockWiseInitialGameDirection = INITIAL_CLOCKWISE;
+
+        public bool ClockWiseInitialGameDirection
+        {
+            get => clockWiseInitialGameDirection;
+            set
+            {
+                clockWiseInitialGameDirection = value;
+                NotifySettingsStateChanged();
+            }
+        }
+
+        private bool keepDirectionBetweenGames = false;
+
+        public bool KeepDirectionBetweenGames
+        {
+            get => keepDirectionBetweenGames;
+            set
+            {
+                keepDirectionBetweenGames = value;
                 NotifySettingsStateChanged();
             }
         }
