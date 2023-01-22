@@ -11,6 +11,11 @@
 
         private static readonly bool INITIAL_CLOCKWISE = true;
 
+        private static readonly List<string> PLAYER_COLOR_DEFAULT_OPTIONS = new List<string>()
+        {
+            "#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe", "#e6beff", "#9a6324", "#aaffc3", "#ffffff"
+        };
+        
         #endregion
 
         public GameTimerState()
@@ -59,6 +64,8 @@
         {
             get => clockWise;
         }
+
+        private readonly Random rnd = new Random();
 
         #endregion
 
@@ -147,6 +154,22 @@
             NotifyGameStateChanged();
         }
 
+        public System.Drawing.Color GetPlayerColour(int requestingPlayerIndex)
+        {
+            if (settings.PlayerColours.TryGetValue(requestingPlayerIndex, out System.Drawing.Color existingColour))
+                return existingColour;
+
+            // generate new colour
+            var colourOptions = PLAYER_COLOR_DEFAULT_OPTIONS;
+            if (settings.PlayerColours.Count < PLAYER_COLOR_DEFAULT_OPTIONS.Count)
+                colourOptions = colourOptions.Where(c => settings.PlayerColours.Values.Contains(System.Drawing.ColorTranslator.FromHtml(c)) == false).ToList();
+            var colour = System.Drawing.ColorTranslator.FromHtml(colourOptions[rnd.Next(colourOptions.Count)]);
+            settings.PlayerColours.Add(requestingPlayerIndex, colour);
+            NotifySettingsStateChanged();
+
+            return colour;
+        }
+        
         public void Tick(object? _)
         {
             if (!paused && currentPlayerIndex.HasValue)
@@ -217,6 +240,17 @@
             set
             {
                 Settings.KeepDirectionBetweenGames = value;
+                NotifySettingsStateChanged();
+            }
+        }
+
+        public bool EnableColours
+        {
+            get => Settings.EnableColours;
+            set
+            {
+                Settings.EnableColours = value;
+                Settings.PlayerColours.Clear();
                 NotifySettingsStateChanged();
             }
         }

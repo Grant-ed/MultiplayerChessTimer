@@ -29,9 +29,19 @@
         get => $"{5M / numRows}vh";
     }
 
+    private System.Drawing.Color borderColor;
+
     private string style
     {
-        get => $"margin-top:{margin}; margin-bottom:{margin};";
+        get {
+            string border = "";
+            if (StateContainer.EnableColours)
+			{
+				var playerColour = StateContainer.GetPlayerColour(TimerIndex);
+				border = $"border: 5px solid #{playerColour.R:X2}{playerColour.G:X2}{playerColour.B:X2};";
+			}
+            return $"margin-top:{margin}; margin-bottom:{margin}; {border}";
+        }
     }
 
     private string btnClass
@@ -76,8 +86,9 @@
     }
 
     protected override void OnInitialized()
-    {
+    {        
         StateContainer.OnGameStateChanged += StateHasChanged;
+        StateContainer.OnSettingsStateChange += StateHasChanged;
     }
 
     private void OnClick()
@@ -88,5 +99,6 @@
     public void Dispose()
     {
         StateContainer.OnGameStateChanged -= StateHasChanged;
+        StateContainer.OnSettingsStateChange += StateHasChanged;
     }
 }

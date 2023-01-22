@@ -16,6 +16,11 @@
         .btn-txt-rotate-270 .mud-button-label {
             transform: rotate(270deg);
         }
+        .eat-the-rainbow p {
+            background: linear-gradient(to right, orange , yellow, green, cyan, blue, violet);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
     <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Stop" Color="Color.Error" Variant="Variant.Filled" Disabled="@resetBtnDisabled" OnClick="GameTimer.InitializeGameTimer" />

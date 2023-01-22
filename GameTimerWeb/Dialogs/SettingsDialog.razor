@@ -8,6 +8,7 @@
             <MudNumericField Class="py-1" @bind-Value="TimePerPlayer" Label="Time Per Player (m:ss)" Variant="Variant.Outlined" Min="1" Step="30" Converter="converterTimePerPlayer" />
             <MudNumericField Class="py-1" @bind-Value="TimeIncrement" Label="Time Increment (seconds)" T="double" Format="F1" Variant="Variant.Outlined" Min="0.0" Step=".5" />
             <MudSwitch Class="py-1 px-2" @bind-Checked="GameTimer.KeepDirectionBetweenGames" Label="Keep direction on reset" />
+            <MudSwitch Class="py-1 px-2 eat-the-rainbow" @bind-Checked="GameTimer.EnableColours" Label="Enable Colours" />
         </MudContainer>
     </DialogContent>
     <DialogActions>
