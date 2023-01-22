@@ -117,7 +117,7 @@
             if (clockWise)
                 currentPlayerIndex = (currentPlayerIndex + 1) % playersTimeLeft.Count;
             else
-                currentPlayerIndex = (currentPlayerIndex - 1) % playersTimeLeft.Count;
+                currentPlayerIndex = ((currentPlayerIndex + playersTimeLeft.Count) - 1) % playersTimeLeft.Count;
 
             // Skip to next player that has time left, if the next player doesn't have any time
             if (playersTimeLeft[currentPlayerIndex.Value] <= TimeSpan.Zero) 
