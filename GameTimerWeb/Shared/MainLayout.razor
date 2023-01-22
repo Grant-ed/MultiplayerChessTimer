@@ -58,12 +58,13 @@
         GameTimer.OnGameStateChanged -= StateHasChanged;
         GameTimer.OnSettingsStateChange -= SaveGameTimerSettingsToLocalStorage;
     }
-
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _isDarkMode = await (_mudThemeProvider?.GetSystemPreference() ?? new Task<bool>(() => false));
+            //_isDarkMode = await (_mudThemeProvider?.GetSystemPreference() ?? new Task<bool>(() => true));
+            _isDarkMode = true;
             StateHasChanged();
         }
     }
