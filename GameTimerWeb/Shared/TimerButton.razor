@@ -9,8 +9,8 @@
     <MudButton 
         Color="@colour" 
         Variant="Variant.Filled" 
-        Class="mud-width-full"
-        Style="height:100%;"
+        Class="@btnClass"
+        Style="height:100%; font-size:xx-large"
         @onclick="OnClick">@currentTime</MudButton>
 </MudPaper>
 
@@ -27,12 +27,23 @@
 
     private string margin {
         get => $"{5M / numRows}vh";
-	}
-	private string style
-	{
-		get => $"margin-top:{margin}; margin-bottom:{margin};";
-	}
-    
+    }
+
+    private string style
+    {
+        get => $"margin-top:{margin}; margin-bottom:{margin};";
+    }
+
+    private string btnClass
+    {
+        get
+        {
+            bool isRightColumn = (double)TimerIndex < ((double)StateContainer.CurrentNumberOfPlayers) / 2;
+            string rotateClass = isRightColumn ? "btn-txt-rotate-270" : "btn-txt-rotate-90";
+            return $"mud-width-full {rotateClass}";
+        }
+    }
+
     private Color colour
     {
         get {

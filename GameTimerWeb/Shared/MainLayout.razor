@@ -8,12 +8,20 @@
 <MudSnackbarProvider />
 
 <MudLayout>
+    <style>
+        .btn-txt-rotate-90 .mud-button-label {
+            transform: rotate(90deg);
+        }
+        .btn-txt-rotate-270 .mud-button-label {
+            transform: rotate(270deg);
+        }
+    </style>
     <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Stop" Color="Color.Error" Variant="Variant.Filled" Disabled="@resetBtnDisabled" OnClick="GameTimer.InitializeGameTimer" />
         <MudSpacer />
         <MudIconButton Icon="@PauseButtonIcon" Color="Color.Primary" Variant="Variant.Filled" Disabled="@gameNotStarted" OnClick="PauseResumeGame" />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" Variant="Variant.Filled" Disabled="@gameNotStarted" OnClick="GameTimer.ReverseDirection" Style="@directionIconStyle" />
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="@directionIconColor" Variant="Variant.Filled" OnClick="GameTimer.ReverseDirection" Style="@directionIconStyle" />
         <MudSpacer />
         <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" Variant="Variant.Filled" Disabled="@gamePlaying" OnClick="OpenSettings" />
     </MudAppBar>
@@ -22,7 +30,6 @@
             @Body
         </MudContainer>
     </MudMainContent>
-    
 </MudLayout>
 
 @code {
@@ -66,6 +73,8 @@
             return $"transform: scaleX({multiplier});";
         }
     }
+    
+    private Color directionIconColor { get => GameTimer.ClockWise ? Color.Tertiary : Color.Secondary; }
 
     private void PauseResumeGame()
     {
