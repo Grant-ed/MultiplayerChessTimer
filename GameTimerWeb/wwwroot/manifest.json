@@ -1,6 +1,6 @@
 {
-  "name": "ChessTimerWeb",
-  "short_name": "ChessTimerWeb",
+  "name": "Multiplayer Chess Clock",
+  "short_name": "Game Clock",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
