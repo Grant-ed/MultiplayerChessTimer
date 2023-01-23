@@ -44,7 +44,7 @@
             if (StateContainer.EnableColours)
             {
                 var playerColour = StateContainer.GetPlayerColour(TimerIndex);
-                border = $"border: 5px solid #{playerColour.R:X2}{playerColour.G:X2}{playerColour.B:X2};";
+                border = $"border: 2px solid #{playerColour.R:X2}{playerColour.G:X2}{playerColour.B:X2};";
             }
             return $"margin-top:{margin}; margin-bottom:{margin}; {border}";
         }
