@@ -4,7 +4,7 @@
 <MudDialog>
     <DialogContent>
         <MudContainer Class="d-flex flex-column py-0 px-0">
-            <MudNumericField Class="py-1" @bind-Value="NumPlayers" Label="Number of Players" Variant="Variant.Outlined" Min="2" />
+            <MudNumericField Class="py-1" @bind-Value="NumPlayers" Label="Number of Players" Variant="Variant.Outlined" Min="2" Max="50" />
             <MudNumericField Class="py-1" @bind-Value="TimePerPlayer" Label="Time Per Player (m:ss)" Variant="Variant.Outlined" Min="1" Step="30" Converter="converterTimePerPlayer" />
             <MudNumericField Class="py-1" @bind-Value="TimeIncrement" Label="Time Increment (seconds)" T="double" Format="F1" Variant="Variant.Outlined" Min="0.0" Step=".5" />
             <MudSwitch Class="py-1 px-2" @bind-Checked="GameTimer.KeepDirectionBetweenGames" Label="Keep direction on reset" />

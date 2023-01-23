@@ -4,13 +4,13 @@
 <MudPaper 
     Height="@height"
     Class="d-flex flex-column align-center justify-center mud-width-full"
-    Style="@style"
+    Style="@stylePaper"
 >
     <MudButton 
         Color="@colour" 
         Variant="Variant.Filled" 
         Class="@btnClass"
-        Style="height:100%; font-size:xx-large"
+        Style="@styleButton"
         DisableElevation="StateContainer.EnableColours"
         @onclick="OnClick">@currentTime</MudButton>
 </MudPaper>
@@ -23,7 +23,12 @@
     private int numRows { get => (int)Math.Ceiling(((double)StateContainer.CurrentNumberOfPlayers) / 2); }
 
     private string height {
-        get => $"{80M / numRows}vh";
+        get => $"{82M / numRows}vh";
+    }
+
+    private string textSize
+    {
+        get => $"{82M / numRows / 4M}vh";
     }
 
     private string margin {
@@ -32,7 +37,7 @@
 
     private System.Drawing.Color borderColor;
 
-    private string style
+    private string stylePaper
     {
         get {
             string border = "";
@@ -43,6 +48,12 @@
             }
             return $"margin-top:{margin}; margin-bottom:{margin}; {border}";
         }
+    }
+
+    private string styleButton
+    {
+        //get => $"height:100%; font-size:xx-large";
+        get => $"height:100%; font-size:{textSize}";
     }
 
     private string btnClass
@@ -70,7 +81,7 @@
             return Color.Success;
         }
     }
-    
+
     private string currentTime {
         get 
         {
@@ -83,9 +94,9 @@
                 return StateContainer.GetFinishedPlayerPlace(TimerIndex);
 
             if (timeLeft < TimeSpan.FromMinutes(1))
-                return timeLeft.Value.ToString(@"ss\.ff");
-                
-            return timeLeft.Value.ToString(@"mm\:ss");
+                return timeLeft.Value.ToString(@"s\.ff");
+
+            return timeLeft.Value.ToString(@"m\:ss");
         }
     }
 
