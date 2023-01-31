@@ -24,6 +24,9 @@
         [NonSerialized]
         public static readonly bool DEFAULT_ENABLE_COLOURS = false;
 
+        [NonSerialized]
+        public static readonly bool DEFAULT_BIG_REVERSE = false;
+
         #endregion
 
         public GameTimerSettings()
@@ -32,8 +35,9 @@
             Increment = DEFAULT_INCREMENT;
             NumberOfPlayersSetting = DEFAULT_NUMBER_OF_PLAYERS;
             KeepDirectionBetweenGames = DEFAULT_KEEP_DIRECTION;
-            EnableColours = EnableColours;
+            EnableColours = DEFAULT_ENABLE_COLOURS;
             PlayerColours = new Dictionary<int, System.Drawing.Color>();
+            BigReverse = DEFAULT_BIG_REVERSE;
         }
 
         public TimeSpan TimePerPlayer { get; set; }
@@ -45,6 +49,8 @@
         public bool KeepDirectionBetweenGames { get; set; }
 
         public bool EnableColours { get; set; }
+
+        public bool BigReverse { get; set; }
 
         [NonSerialized]
         public Dictionary<int, System.Drawing.Color> PlayerColours;

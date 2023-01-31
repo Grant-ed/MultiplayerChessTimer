@@ -159,6 +159,8 @@
         public void ReverseDirection()
         {
             clockWise = !clockWise;
+            if (!paused && currentPlayerIndex != null)
+                NextPlayer(currentPlayerIndex.Value);
             NotifyGameStateChanged();
         }
 
@@ -284,6 +286,16 @@
             {
                 Settings.EnableColours = value;
                 Settings.PlayerColours.Clear();
+                NotifySettingsStateChanged();
+            }
+        }
+
+        public bool BigReverseButton
+        {
+            get => Settings.BigReverse;
+            set
+            {
+                Settings.BigReverse = value;
                 NotifySettingsStateChanged();
             }
         }

@@ -27,7 +27,7 @@
         <MudSpacer />
         <MudIconButton Icon="@PauseButtonIcon" Color="Color.Primary" Variant="Variant.Filled" Disabled="@gameNotStarted" OnClick="PauseResumeGame" />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="@directionIconColor" Variant="Variant.Filled" OnClick="GameTimer.ReverseDirection" Style="@directionIconStyle" />
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="@HelperFunctions.GetDirectionIconColor(GameTimer)" Variant="Variant.Filled" OnClick="GameTimer.ReverseDirection" Style="@HelperFunctions.GetDirectionStyle(GameTimer)" />
         <MudSpacer />
         <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" Variant="Variant.Filled" Disabled="@gamePlaying" OnClick="OpenSettings" />
     </MudAppBar>
@@ -97,16 +97,7 @@
     {
         get => GameTimer.Paused ? Icons.Material.Filled.PlayArrow : Icons.Material.Filled.Pause;
     }
-
-    private string directionIconStyle {
-        get {
-            int multiplier = GameTimer.ClockWise ? 1 : -1;
-            return $"transform: scaleX({multiplier});";
-        }
-    }
     
-    private Color directionIconColor { get => GameTimer.ClockWise ? Color.Tertiary : Color.Info; }
-
     private void PauseResumeGame()
     {
         if (gameNotStarted)

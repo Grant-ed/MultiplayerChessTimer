@@ -20,50 +20,23 @@
     [Parameter]
     public int TimerIndex { get; set; }
 
-    private int numRows { get => (int)Math.Ceiling(((double)StateContainer.CurrentNumberOfPlayers) / 2); }
-
     private string height {
-        get => $"{82M / numRows}vh";
+        get => HelperFunctions.GetButtonHeight(StateContainer);
     }
-
-    private string textSize
-    {
-        get => $"{82M / numRows / 4M}vh";
-    }
-
-    private string margin {
-        get => $"{5M / numRows}vh";
-    }
-
-    private System.Drawing.Color borderColor;
 
     private string stylePaper
     {
-        get {
-            string border = "";
-            if (StateContainer.EnableColours)
-            {
-                var playerColour = StateContainer.GetPlayerColour(TimerIndex);
-                border = $"border: 2px solid #{playerColour.R:X2}{playerColour.G:X2}{playerColour.B:X2};";
-            }
-            return $"margin-top:{margin}; margin-bottom:{margin}; {border}";
-        }
+        get => HelperFunctions.GetButtonPaperStyle(StateContainer, TimerIndex);
     }
 
     private string styleButton
     {
-        //get => $"height:100%; font-size:xx-large";
-        get => $"height:100%; font-size:{textSize}";
+        get => HelperFunctions.GetButtonStyle(StateContainer);
     }
 
     private string btnClass
     {
-        get
-        {
-            bool isRightColumn = (double)TimerIndex < ((double)StateContainer.CurrentNumberOfPlayers) / 2;
-            string rotateClass = isRightColumn ? "btn-txt-rotate-270" : "btn-txt-rotate-90";
-            return $"mud-width-full {rotateClass}";
-        }
+        get => HelperFunctions.GetButtonClass(StateContainer, TimerIndex);
     }
 
     private Color colour
